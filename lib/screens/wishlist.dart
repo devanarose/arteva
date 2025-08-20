@@ -15,20 +15,20 @@ class Wishlist extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Your Wishlist'),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Colors.grey,
         foregroundColor: Colors.white,
       ),
       body: wishlistItems.isEmpty
           ? const Center(child: Text('Your wishlist is empty'))
           : Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical:6),
         child: GridView.builder(
           itemCount: wishlistItems.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.44,
+          gridDelegate:  SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 230,
+            crossAxisSpacing: 2,
+            mainAxisSpacing: 2,
+            childAspectRatio:0.5,
           ),
           itemBuilder: (context, index) {
             final item = wishlistItems[index];

@@ -40,8 +40,8 @@ class _ProductCardState extends State<ProductCard> {
       onTap: widget.onTap,
       child: Container(
         width: 230,
-        height: 370,
-        margin: const EdgeInsets.only(right: 16, bottom: 16),
+        height: 350,
+        margin: const EdgeInsets.only(right:4,left: 4, bottom: 8, top: 8),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -112,12 +112,7 @@ class _ProductCardState extends State<ProductCard> {
                       onPressed: () {
                         if (isWishlisted) {
                           wishlistProvider.removeFromWishlist(widget.title);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Removed from wishlist'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
+
                         } else {
                           wishlistProvider.addToWishlist(
                             WishlistItem(
@@ -127,12 +122,7 @@ class _ProductCardState extends State<ProductCard> {
                               price: widget.price,
                             ),
                           );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Added to wishlist'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
+
                         }
                       },
                     );
@@ -152,9 +142,6 @@ class _ProductCardState extends State<ProductCard> {
                           image: widget.imageUrl,
                           price: int.parse(widget.price.replaceAll(RegExp(r'[^0-9]'), '')),
                         ),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Item added to cart')),
                       );
                     },
                     style: ElevatedButton.styleFrom(

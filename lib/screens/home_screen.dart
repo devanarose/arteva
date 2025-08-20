@@ -7,6 +7,7 @@ import 'package:erp_demo/widget/products.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/bottom_navbar_design.dart';
 import '../providers/cart_provider.dart';
 import '../widget/categorygrid_widget.dart';
 import 'package:badges/badges.dart' as badges;
@@ -30,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final List<Widget> pages = [
       _buildMainContent(paddingTop),
-      Wishlist(),// Wishlist
+      Wishlist(),
       CartPage(),
       _buildCategoriesPage(),
       _buildAccountPage(context),
@@ -55,12 +56,14 @@ class _HomeScreenState extends State<HomeScreen> {
           alignment: Alignment.center,
           children: [
             // Base Nav Container
-            Container(
+            ClipPath(
+            clipper: BottomNavBarClipper(),
+            child: Container(
               height: 70,
               margin: const EdgeInsets.symmetric(horizontal: 6),
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.black,
                 borderRadius: BorderRadius.circular(40),
                 boxShadow: [
                   BoxShadow(
@@ -70,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 ],
               ),
+
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -80,20 +84,29 @@ class _HomeScreenState extends State<HomeScreen> {
                             : Colors.grey),
                     onPressed: () => setState(() => _currentIndex = 0),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.favorite,
-                        color: _currentIndex == 1
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey),
-                    onPressed: () => setState(() => _currentIndex = 1),
+
+                  Transform.translate(
+                    offset: Offset(-20, 0),
+                    child: IconButton(
+                      icon: Icon(Icons.favorite,
+                          color: _currentIndex == 1
+                              ? Theme.of(context).primaryColor
+                              : Colors.grey),
+                      onPressed: () => setState(() => _currentIndex = 1),
+                    ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.category_sharp,
-                        color: _currentIndex == 3
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey),
-                    onPressed: () => setState(() => _currentIndex = 3),
+
+                  Transform.translate(
+                    offset: Offset(20, 0),
+                    child: IconButton(
+                      icon: Icon(Icons.category_sharp,
+                          color: _currentIndex == 3
+                              ? Theme.of(context).primaryColor
+                              : Colors.grey),
+                      onPressed: () => setState(() => _currentIndex = 3),
+                    ),
                   ),
+
                   IconButton(
                     icon: Icon(Icons.person_2_rounded,
                         color: _currentIndex == 4
@@ -104,13 +117,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+          ),
 
             Positioned(
               top: -30,
               child: GestureDetector(
                 onTap: () => setState(() => _currentIndex = 2),
                 child: Container(
-                  height: 60,
+                  height: 100,
                   width: 60,
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
