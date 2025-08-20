@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../models/bottom_navbar_design.dart';
 import '../providers/cart_provider.dart';
+
 import '../widget/categorygrid_widget.dart';
 import 'package:badges/badges.dart' as badges;
 
@@ -86,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   Transform.translate(
-                    offset: Offset(-20, 0),
+                    offset: Offset(-30, 0),
                     child: IconButton(
                       icon: Icon(Icons.favorite,
                           color: _currentIndex == 1
@@ -97,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   Transform.translate(
-                    offset: Offset(20, 0),
+                    offset: Offset(30, 0),
                     child: IconButton(
                       icon: Icon(Icons.category_sharp,
                           color: _currentIndex == 3
@@ -151,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
 
-                          if (cartProvider.cartCount > 0)
+                          if (cartProvider.uniqueItemCount > 0)
                             Positioned(
                               right: 2,
                               top: 2,
@@ -163,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                                 child: Text(
-                                  '${cartProvider.cartCount}',
+                                  '${cartProvider.uniqueItemCount}',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 10,

@@ -105,14 +105,13 @@ class _ProductCardState extends State<ProductCard> {
                     return IconButton(
                       icon: Icon(
                         isWishlisted ? Icons.favorite : Icons.favorite_border,
-                        size: 30,
+                        size: 28,
                         color: isWishlisted ? Theme.of(context).primaryColor : Colors.grey,
                       ),
                       padding: EdgeInsets.zero,
                       onPressed: () {
                         if (isWishlisted) {
                           wishlistProvider.removeFromWishlist(widget.title);
-
                         } else {
                           wishlistProvider.addToWishlist(
                             WishlistItem(
@@ -122,33 +121,90 @@ class _ProductCardState extends State<ProductCard> {
                               price: widget.price,
                             ),
                           );
-
                         }
                       },
                     );
                   },
                 ),
 
+                Spacer(),
 
-                const SizedBox(width: 6),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final cartProvider = Provider.of<CartProvider>(context, listen: false);
-                      cartProvider.addItem(
-                        CartItem(
-                          title: widget.title,
-                          subtitle: widget.subtitle,
-                          image: widget.imageUrl,
-                          price: int.parse(widget.price.replaceAll(RegExp(r'[^0-9]'), '')),
+                Consumer<CartProvider>(
+                  builder: (context, cartProvider, _) {
+                    final isInCart = cartProvider.isInCart(widget.title);
+                    final cartItem = cartProvider.getItem(widget.title);
+
+                    return isInCart
+                        ? Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 6),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Theme.of(context).primaryColor),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              cartProvider.decreaseQuantity(widget.title);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Theme.of(context).primaryColor),
+                              ),
+                              child: Icon(Icons.remove, size: 14, color: Theme.of(context).primaryColor),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            '${cartItem?.quantity ?? 1}',
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 10),
+                          GestureDetector(
+                            onTap: () {
+                              cartProvider.increaseQuantity(widget.title);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              child: const Icon(Icons.add, size: 14, color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                        : SizedBox(
+                      width: 170,
+                      // height: 36,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          cartProvider.addItem(
+                            CartItem(
+                              title: widget.title,
+                              subtitle: widget.subtitle,
+                              image: widget.imageUrl,
+                              price: int.parse(widget.price.replaceAll(RegExp(r'[^0-9]'), '')),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                    ),
-                    child: const Text('Add to Bag'),
-                  ),
+                        child: const Text(
+                          'Add to Bag',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

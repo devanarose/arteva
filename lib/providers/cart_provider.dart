@@ -18,6 +18,7 @@ class CartItem {
 class CartProvider extends ChangeNotifier {
   final List<CartItem> _items = [];
   List<CartItem> get items => _items;
+  int get uniqueItemCount => _items.length;
 
   int get cartCount => _items.fold(0,(sum,item) => sum + item.quantity);
   double get total => _items.fold(0,(sum,item) => sum + (item.price * item.quantity));
@@ -31,6 +32,38 @@ class CartProvider extends ChangeNotifier {
       _items.add(newItem);
     }
     notifyListeners();
+  }
+
+  void increaseQuantity(String title) {
+    final index = _items.indexWhere((item) => item.title == title);
+    if (index != -1) {
+      _items[index].quantity++;
+      notifyListeners();
+    }
+  }
+
+  void decreaseQuantity(String title) {
+    final index = _items.indexWhere((item) => item.title == title);
+    if (index != -1) {
+      if (_items[index].quantity > 1) {
+        _items[index].quantity--;
+      } else {
+        _items.removeAt(index);
+      }
+      notifyListeners();
+    }
+  }
+
+  bool isInCart(String title) {
+    return _items.any((item) => item.title == title);
+  }
+
+  CartItem? getItem(String title) {
+    try {
+      return _items.firstWhere((item) => item.title == title);
+    } catch (_) {
+      return null;
+    }
   }
 
   void clear(){
