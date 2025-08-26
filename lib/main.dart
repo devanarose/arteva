@@ -1,5 +1,7 @@
 import 'package:erp_demo/providers/cart_provider.dart';
 import 'package:erp_demo/providers/wishlist_provider.dart';
+import 'package:erp_demo/screens/cart_page.dart';
+import 'package:erp_demo/screens/product_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
@@ -68,6 +70,7 @@ class ArtEva extends StatelessWidget {
                   ),
                 ),
               ),
+
               inputDecorationTheme: InputDecorationTheme(
                 filled: true,
                 fillColor: Colors.white,
@@ -99,8 +102,8 @@ class ArtEva extends StatelessWidget {
               LoginScreen.route: (context) => LoginScreen(),
               '/signup': (context) => SignupScreen(),
               '/welcome': (context) => WelcomeScreen(),
+              '/cartpage': (context) => CartPage(),
             },
-
           );
         },
       ),

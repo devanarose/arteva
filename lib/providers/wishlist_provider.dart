@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 class WishlistItem {
+  final String p_id;
   final String title;
   final String subtitle;
   final String image;
   final String price;
 
   WishlistItem({
+    required this.p_id,
     required this.title,
     required this.subtitle,
     required this.image,
@@ -20,18 +22,18 @@ class WishlistProvider extends ChangeNotifier {
   List<WishlistItem> get items => _items;
 
   void addToWishlist(WishlistItem item) {
-    if (!_items.any((existing) => existing.title == item.title)) {
+    if (!_items.any((existing) => existing.p_id == item.p_id)) {
       _items.add(item);
       notifyListeners();
     }
   }
 
-  void removeFromWishlist(String title) {
-    _items.removeWhere((item) => item.title == title);
+  void removeFromWishlist(String p_id) {
+    _items.removeWhere((item) => item.p_id == p_id);
     notifyListeners();
   }
 
-  bool isWishlisted(String title) {
-    return _items.any((item) => item.title == title);
+  bool isWishlisted(String p_id) {
+    return _items.any((item) => item.p_id == p_id);
   }
 }

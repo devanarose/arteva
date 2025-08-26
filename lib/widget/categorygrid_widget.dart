@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/category_item.dart';
+import '../screens/category_page.dart';
 
 class CategoriesGrid extends StatelessWidget {
   const CategoriesGrid({super.key});
@@ -31,6 +32,7 @@ class CategoriesGrid extends StatelessWidget {
                 customBorder: const CircleBorder(),
                 splashColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                 onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryProductsPage(categoryId: category.c_id, categoryName: category.name,),),);
                   debugPrint('Tapped on ${category.name}');
                 },
                 child: SizedBox(
@@ -59,6 +61,7 @@ class CategoriesGrid extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
+            // const SizedBox(height: 40),
           ],
         );
       },

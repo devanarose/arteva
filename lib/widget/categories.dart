@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/category_item.dart';
+import '../screens/category_page.dart';
 
 class Categories extends StatelessWidget {
   const Categories({super.key});
@@ -37,7 +38,7 @@ class Categories extends StatelessWidget {
                       borderRadius: BorderRadius.circular(900),
                       splashColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                       onTap: () {
-                        print('Tapped on ${category.name}');
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryProductsPage(categoryId: category.c_id, categoryName: category.name,),),);
                       },
                       child: Container(
                         width: 60,

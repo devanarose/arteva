@@ -3,22 +3,23 @@ import 'package:provider/provider.dart';
 
 import '../providers/cart_provider.dart';
 import '../providers/wishlist_provider.dart';
-import '../screens/cart_page.dart';
 
 class ProductCard extends StatefulWidget {
-  final String imageUrl;
-  final String title;
-  final String subtitle;
-  final String price;
+  final String p_id,imageUrl,title,subtitle,price,description;
   final VoidCallback? onTap;
+  final bool isWishlistView, isCategoryView;
+
+
 
   const ProductCard({
     super.key,
+    required this.p_id,
     required this.imageUrl,
     required this.title,
     required this.subtitle,
     required this.price,
-    this.onTap,
+    required this.description,
+    this.onTap,this.isWishlistView = false, this.isCategoryView = false,
   });
 
   @override
@@ -55,6 +56,7 @@ class _ProductCardState extends State<ProductCard> {
           ],
         ),
         child: Column(
+          // mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
@@ -100,7 +102,7 @@ class _ProductCardState extends State<ProductCard> {
               children: [
                 Consumer<WishlistProvider>(
                   builder: (context, wishlistProvider, _) {
-                    final isWishlisted = wishlistProvider.isWishlisted(widget.title);
+                    final isWishlisted = wishlistProvider.isWishlisted(widget.p_id);
 
                     return IconButton(
                       icon: Icon(
@@ -111,10 +113,11 @@ class _ProductCardState extends State<ProductCard> {
                       padding: EdgeInsets.zero,
                       onPressed: () {
                         if (isWishlisted) {
-                          wishlistProvider.removeFromWishlist(widget.title);
+                          wishlistProvider.removeFromWishlist(widget.p_id);
                         } else {
                           wishlistProvider.addToWishlist(
                             WishlistItem(
+                              p_id: widget.p_id,
                               title: widget.title,
                               subtitle: widget.subtitle,
                               image: widget.imageUrl,
@@ -126,65 +129,80 @@ class _ProductCardState extends State<ProductCard> {
                     );
                   },
                 ),
-
                 Spacer(),
-
                 Consumer<CartProvider>(
                   builder: (context, cartProvider, _) {
-                    final isInCart = cartProvider.isInCart(widget.title);
-                    final cartItem = cartProvider.getItem(widget.title);
+                    final isInCart = cartProvider.isInCart(widget.p_id);
+                    final cartItem = cartProvider.getItem(widget.p_id);
 
                     return isInCart
-                        ? Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 6),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Theme.of(context).primaryColor),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              cartProvider.decreaseQuantity(widget.title);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Theme.of(context).primaryColor),
+                        ? SizedBox(
+                      width: (widget.isWishlistView || widget.isCategoryView) ? 110 : 170,
+                      height: 40,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.5)),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: InkWell(
+                                onTap: () => cartProvider.decreaseQuantity(widget.p_id),
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(30),
+                                  bottomLeft: Radius.circular(30),
+                                ),
+                                child: Center(
+                                  child: Icon(Icons.remove, size: 18, color: Theme.of(context).primaryColor),
+                                ),
                               ),
-                              child: Icon(Icons.remove, size: 14, color: Theme.of(context).primaryColor),
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            '${cartItem?.quantity ?? 1}',
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(width: 10),
-                          GestureDetector(
-                            onTap: () {
-                              cartProvider.increaseQuantity(widget.title);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Theme.of(context).primaryColor,
+
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              child: Text(
+                                '${cartItem?.quantity ?? 1}',
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              child: const Icon(Icons.add, size: 14, color: Colors.white),
                             ),
-                          ),
-                        ],
+
+                            Expanded(
+                              child: InkWell(
+                                onTap: () => cartProvider.increaseQuantity(widget.p_id),
+                                borderRadius: const BorderRadius.only(
+                                  topRight: Radius.circular(30),
+                                  bottomRight: Radius.circular(30),
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: Theme.of(context).primaryColor),
+                                    ),
+                                    child: Icon(Icons.add, size: 16, color: Theme.of(context).primaryColor),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        ),
                       ),
                     )
                         : SizedBox(
-                      width: 170,
-                      // height: 36,
+                      width: (widget.isWishlistView || widget.isCategoryView) ? 110 : 170,
+                      height: 40,
                       child: ElevatedButton(
                         onPressed: () {
                           cartProvider.addItem(
                             CartItem(
+                              p_id: widget.p_id,
                               title: widget.title,
                               subtitle: widget.subtitle,
                               image: widget.imageUrl,
@@ -198,12 +216,16 @@ class _ProductCardState extends State<ProductCard> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        child: const Text(
-                          'Add to Bag',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        child: Text(
+                          'Add to cart',
+                          style: TextStyle(
+                            fontSize: (widget.isWishlistView || widget.isCategoryView) ? 10.8 : 14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     );
+
                   },
                 ),
               ],
