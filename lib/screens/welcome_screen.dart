@@ -49,6 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                           Navigator.pushNamed(context, LoginScreen.route);
                         },
                         style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(200, 50),
                           side: BorderSide(color: Colors.white),
                           padding: EdgeInsets.symmetric(vertical: 16),
                         ),
@@ -62,6 +63,7 @@ class WelcomeScreen extends StatelessWidget {
                           Navigator.pushNamed(context, '/signup');
                         },
                         style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(200, 50),
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.blue,
                           padding: EdgeInsets.symmetric(vertical: 16),

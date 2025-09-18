@@ -5,7 +5,7 @@ class WishlistItem {
   final String title;
   final String subtitle;
   final String image;
-  final String price;
+  final double price;
 
   WishlistItem({
     required this.p_id,

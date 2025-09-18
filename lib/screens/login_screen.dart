@@ -166,7 +166,7 @@ class LoginScreen extends StatelessWidget {
       hintText: hint,
       hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
       filled: true,
-      fillColor: Colors.white.withValues(alpha:0.1), // <– glass-like fill
+      fillColor: Colors.white.withValues(alpha:0.1),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide(color: Colors.white70),

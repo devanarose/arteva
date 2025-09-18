@@ -1,37 +1,45 @@
-import 'package:erp_demo/screens/product_detail.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:path_provider/path_provider.dart';
+
+import '../models/cart_item_card.dart';
 import '../providers/cart_provider.dart';
+import '../widget/cart_item.dart';
+import 'product_detail.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
+  static const routeName = '/cartpage';
+
   @override
   Widget build(BuildContext context) {
-    final cartProvider = Provider.of<CartProvider>(context);
-    final cartItems = cartProvider.items;
-
+    // final cartItems = context.select<CartProvider, List<CartItem>>((provider) => provider.items,);
+    // final cartItems = context.read<CartProvider>().items;
+    // final cartItems = Provider.of<CartProvider>(context, listen: true).items;
+    final cartItems = context.watch<CartProvider>().items;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Cart'),
+        title: Text('My Cart ${cartItems.length}'),
         foregroundColor: Colors.black,
         backgroundColor: const Color(0xFFF1F1F6),
       ),
-        body: cartItems.isEmpty
-            ? Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/cart_image.jpg',
-                width: 200,
-                height: 200,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
+      body: cartItems.isEmpty
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/cart_image.jpg',
+              width: 200,
+              height: 200,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
       )
           : Column(
         children: [
@@ -41,140 +49,16 @@ class CartPage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               itemBuilder: (context, index) {
                 final item = cartItems[index];
-                return Stack(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetail(p_id: item.p_id,title: item.title,),),);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF1F8F6),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12.withAlpha(20),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            )
-                          ],
-                        ),
-                        margin: const EdgeInsets.only(bottom: 20),
-                        padding: const EdgeInsets.all(14),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.asset(
-                                item.image,
-                                width: 70,
-                                height: 70,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.title,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    item.subtitle,
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey.shade300),
-                                          borderRadius: BorderRadius.circular(30),
-                                          color: Colors.white,
-                                        ),
-                                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
-                                        child: Row(
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.remove_circle_outline, color: Colors.teal),
-                                              onPressed: () => cartProvider.decreaseQuantity(item.p_id),
-                                              splashRadius: 20,
-                                            ),
-                                            Text(
-                                              '${item.quantity}',
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.add_circle_outline, color: Colors.teal),
-                                              onPressed: () => cartProvider.increaseQuantity(item.p_id),
-                                              splashRadius: 20,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Text(
-                                        '₹${item.price * item.quantity}',
-                                        style: TextStyle(
-                                          color: Theme.of(context).primaryColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    Positioned(
-                      bottom: 45,
-                      left: 220,
-                      child: GestureDetector(
-                        onTap: () => cartProvider.removeItem(item.p_id),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          padding: const EdgeInsets.all(3),
-                          child: const Icon(
-                            Icons.delete_outline,
-                            size: 25,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
+                return CartItemWidget(key: ValueKey(item.p_id), productId: item.p_id, item: cartItems[index]);
               },
             ),
           ),
-
           Padding(
-            padding: const EdgeInsets.only(bottom: 10), //bottom padding
+            padding: const EdgeInsets.only(bottom: 10),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               decoration: BoxDecoration(
-                color: Color(0xFFF1F1F6),
+                color: const Color(0xFFF1F1F6),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black12.withAlpha(20),
@@ -184,39 +68,42 @@ class CartPage extends StatelessWidget {
                 ],
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Total : ₹${cartProvider.total}',
+                  Selector<CartProvider, double>(
+                    selector: (_, provider) => provider.total,
+                    builder: (context, total, _) {
+                      return Text(
+                        'Total : ₹${total.toStringAsFixed(2)}',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).primaryColor,
                         ),
+                      );
+                    },
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Proceeding to checkout...'),),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Proceeding to checkout...')),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Proceed to Checkout',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
+                    ),
+                    child: const Text(
+                      'Proceed to Checkout',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),

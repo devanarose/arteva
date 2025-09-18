@@ -1,15 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/cart_provider.dart';
 import '../providers/wishlist_provider.dart';
 
 class ProductCard extends StatefulWidget {
-  final String p_id,imageUrl,title,subtitle,price,description;
+  final String p_id;
+  final String imageUrl,title,subtitle,description;
+  final double price;
   final VoidCallback? onTap;
   final bool isWishlistView, isCategoryView;
-
-
 
   const ProductCard({
     super.key,
@@ -27,18 +30,23 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
-  // bool isFavorite = false;
-  //
-  // void toggleFavorite() {
-  //   setState(() {
-  //     isFavorite = !isFavorite;
-  //   });
+
+  // Future<String?> _getFullImagePath(String? filename) async {
+  //   if (filename == null) return null;
+  //   final dir = await getApplicationDocumentsDirectory();
+  //   return '${dir.path}/$filename';
   // }
+  Future<File?> _getFullImagePath(String? filename) async {
+    if (filename == null || filename.isEmpty) return null;
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File('${dir.path}/$filename');
+    return (file.existsSync()) ? file : null;
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: widget.onTap, //works on wishlist page
       child: Container(
         width: 230,
         height: 350,
@@ -56,16 +64,38 @@ class _ProductCardState extends State<ProductCard> {
           ],
         ),
         child: Column(
-          // mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                widget.imageUrl,
-                height: 190,
-                width: double.infinity,
-                fit: BoxFit.contain,
+              child: FutureBuilder<File?>(
+                future: _getFullImagePath(widget.imageUrl),
+                builder: (context, snapshot) {
+                  // if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+                  //   final file = File(snapshot.data!);
+                  //   if (file.existsSync()) {
+                  //     return Image.file(
+                  //       file,
+                  //       height: 190,
+                  //       width: double.infinity,
+                  //       fit: BoxFit.contain,
+                  //     );
+                  //   }
+                  // }
+                  if (snapshot.hasData && snapshot.data != null) {
+                    return Image.file(
+                      snapshot.data!,
+                      height: 190,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    );
+                  }
+                  return const SizedBox(
+                    height: 190,
+                    child: Center(child: Icon(Icons.image_not_supported, size: 60)),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 8),
@@ -90,7 +120,7 @@ class _ProductCardState extends State<ProductCard> {
             ),
             const SizedBox(height: 6),
             Text(
-              widget.price,
+              '₹${widget.price.toStringAsFixed(2)}',
               style: TextStyle(
                 color: Theme.of(context).primaryColor,
                 fontWeight: FontWeight.bold,
@@ -206,7 +236,7 @@ class _ProductCardState extends State<ProductCard> {
                               title: widget.title,
                               subtitle: widget.subtitle,
                               image: widget.imageUrl,
-                              price: int.parse(widget.price.replaceAll(RegExp(r'[^0-9]'), '')),
+                              price: widget.price,
                             ),
                           );
                         },
@@ -225,7 +255,6 @@ class _ProductCardState extends State<ProductCard> {
                         ),
                       ),
                     );
-
                   },
                 ),
               ],

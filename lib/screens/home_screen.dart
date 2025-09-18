@@ -14,6 +14,8 @@ import '../providers/cart_provider.dart';
 import '../widget/categorygrid_widget.dart';
 import 'package:badges/badges.dart' as badges;
 
+import 'add_category.dart';
+import 'add_product.dart';
 import 'cart_page.dart';
 
 
@@ -379,11 +381,29 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     onPressed: () async {
                       await authProvider.logout();
-                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => WelcomeScreen()), (route) => false,
-                      );
+                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => WelcomeScreen()), (route) => false,);
                     },
                     child: const Text('Logout', style: TextStyle(color: Colors.white)),
-                  )
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () async {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => AddProducts()),);
+                    },
+                    child: const Text('Add product', style: TextStyle(color: Colors.white)),
+                  ),ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () async {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => AddCategoryPage()),);
+                    },
+                    child: const Text('Add category', style: TextStyle(color: Colors.white)),
+                  ),
                 ],
               ),
             ),

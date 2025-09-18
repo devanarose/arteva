@@ -5,7 +5,7 @@ class CartItem {
   final String title;
   final String subtitle;
   final String image;
-  final int price;
+  final double price;
   int quantity;
 
   CartItem({
@@ -27,6 +27,7 @@ class CartProvider extends ChangeNotifier {
   double get total => _items.fold(0, (sum, item) => sum + (item.price * item.quantity));
 
   void addItem(CartItem newItem) {
+    print("add item");
     final index = _items.indexWhere((item) => item.p_id == newItem.p_id);
     if (index >= 0) {
       _items[index].quantity += 1;
@@ -37,6 +38,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   void increaseQuantity(String id) {
+    print('increaseQuantity called for $id');
     final index = _items.indexWhere((item) => item.p_id == id);
     if (index != -1) {
       _items[index].quantity++;

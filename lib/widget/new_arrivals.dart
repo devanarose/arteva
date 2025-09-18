@@ -1,42 +1,35 @@
 import 'package:flutter/material.dart';
+import '../database/DBHelper.dart';
+import '../models/product_item.dart';
 import '../screens/product_detail.dart';
 import 'product_card.dart';
 
-class NewArrivals extends StatelessWidget {
+class NewArrivals extends StatefulWidget {
   const NewArrivals({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, String>> productList = [
-      {
-        'p_id': 'p4',
-        'imageUrl': 'assets/images/products/paint3.jpg',
-        'title': 'Camel Artist Watercolour Tube Set',
-        'subtitle': 'The Camel Artist Watercolour Tube Set offers vibrant, high-quality pigments in 12- and 24-shade options with various tube sizes, providing versatile, portable, and affordable watercolor paints suitable for artists of all skill levels.',
-        'price': 'Rs 441',
-        'description' : '',
-        'c_id': 'c1',
-      },
-      {
-        'p_id': 'p1',
-        'imageUrl': 'assets/images/products/paint1.png',
-        'title': 'Camel Artist Oil Colours - 40ml - Loose Tubes',
-        'subtitle': 'A premium choice for oil painting enthusiasts.',
-        'price': 'Rs 252',
-        'description' : '',
-        'c_id': 'c1',
-      },
-      {
-        'p_id': 'p5',
-        'imageUrl': 'assets/images/products/stationary1.jpg',
-        'title': 'Ystudio | Rollerball Pen | Black Brassing',
-        'subtitle': 'Ystudios 10th anniversary fountain pen celebrates the brand’s heritage with a beautifully crafted solid brass body, combining timeless design, balanced weight, ergonomic comfort, and the evolving patina that uniquely tells the users story.',
-        'price': 'Rs 11,475',
-        'description' : '',
-        'c_id': 'c5',
-      },
-    ];
+  State<NewArrivals> createState() => _NewArrivalsState();
+}
 
+class _NewArrivalsState extends State<NewArrivals> {
+  List<ProductItem> new_products = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadNewArrivals();
+  }
+
+  Future<void> loadNewArrivals() async {
+    final allProducts = await DBHelper.instance.getAllProducts();
+    final newArrivals = allProducts.where((p) => p.section.toLowerCase() == 'new').toList();
+    setState(() {
+      new_products = newArrivals;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 20),
       child: Column(
@@ -52,25 +45,37 @@ class NewArrivals extends StatelessWidget {
           const SizedBox(height: 12),
           SizedBox(
             height: 370,
-            child: ListView.separated(
+            child: new_products.isEmpty
+                ? const Center(child: Text('No new arrivals found'))
+                : ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: productList.length,
+              itemCount: new_products.length,
               separatorBuilder: (_, __) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
-                final product = productList[index];
+                final product = new_products[index];
                 return SizedBox(
                   width: 250,
-                  // width: MediaQuery.of(context).size.width - 130,
-                  child: ProductCard(
-                    imageUrl: product['imageUrl']!,
-                    title: product['title']!,
-                    subtitle: product['subtitle']!,
-                    price: product['price']!,
-                    p_id: product['p_id']!, description: '',
+                  child: GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetail(p_id: product['p_id']!, title: product['title']!,),),);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductDetail(
+                            p_id: product.p_id.toString(),
+                            title: product.title,
+                          ),
+                        ),
+                      );
                     },
+                    child: ProductCard(
+                      imageUrl: product.imageUrl,
+                      title: product.title,
+                      subtitle: product.subtitle,
+                      price: product.price,
+                      p_id: product.p_id.toString(),
+                      description: product.description,
+                    ),
                   ),
                 );
               },
