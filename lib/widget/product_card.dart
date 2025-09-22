@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/auth_provider.dart';
 import '../providers/cart_provider.dart';
 import '../providers/wishlist_provider.dart';
 
@@ -45,6 +46,7 @@ class _ProductCardState extends State<ProductCard> {
 
   @override
   Widget build(BuildContext context) {
+    final userId = Provider.of<AuthProvider>(context, listen: false).userId!;
     return GestureDetector(
       onTap: widget.onTap, //works on wishlist page
       child: Container(
@@ -165,7 +167,7 @@ class _ProductCardState extends State<ProductCard> {
                     final isInCart = cartProvider.isInCart(widget.p_id);
                     final cartItem = cartProvider.getItem(widget.p_id);
 
-                    return isInCart
+                    return isInCart && cartItem != null
                         ? SizedBox(
                       width: (widget.isWishlistView || widget.isCategoryView) ? 110 : 170,
                       height: 40,
@@ -179,7 +181,7 @@ class _ProductCardState extends State<ProductCard> {
                           children: [
                             Expanded(
                               child: InkWell(
-                                onTap: () => cartProvider.decreaseQuantity(widget.p_id),
+                                onTap: () => cartProvider.decreaseQuantity(cartItem.cartId, userId),
                                 borderRadius: const BorderRadius.only(
                                   topLeft: Radius.circular(30),
                                   bottomLeft: Radius.circular(30),
@@ -189,21 +191,19 @@ class _ProductCardState extends State<ProductCard> {
                                 ),
                               ),
                             ),
-
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 4),
                               child: Text(
-                                '${cartItem?.quantity ?? 1}',
+                                '${cartItem.quantity}',
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
-
                             Expanded(
                               child: InkWell(
-                                onTap: () => cartProvider.increaseQuantity(widget.p_id),
+                                onTap: () => cartProvider.increaseQuantity(cartItem.cartId, userId),
                                 borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(30),
                                   bottomRight: Radius.circular(30),
@@ -220,7 +220,6 @@ class _ProductCardState extends State<ProductCard> {
                                 ),
                               ),
                             ),
-
                           ],
                         ),
                       ),
@@ -229,16 +228,8 @@ class _ProductCardState extends State<ProductCard> {
                       width: (widget.isWishlistView || widget.isCategoryView) ? 110 : 170,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () {
-                          cartProvider.addItem(
-                            CartItem(
-                              p_id: widget.p_id,
-                              title: widget.title,
-                              subtitle: widget.subtitle,
-                              image: widget.imageUrl,
-                              price: widget.price,
-                            ),
-                          );
+                        onPressed: () async {
+                          await cartProvider.addItem(widget.p_id, userId);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).primaryColor,

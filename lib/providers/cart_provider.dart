@@ -1,96 +1,112 @@
+
+
 import 'package:flutter/material.dart';
+import 'package:erp_demo/database/DBHelper.dart';
 
 class CartItem {
+  final int cartId;
   final String p_id;
   final String title;
   final String subtitle;
   final String image;
   final double price;
-  int quantity;
+  final int quantity;
 
   CartItem({
+    required this.cartId,
     required this.p_id,
     required this.title,
     required this.subtitle,
     required this.image,
     required this.price,
-    this.quantity = 1,
+    required this.quantity,
   });
+
+  factory CartItem.fromMap(Map<String, dynamic> map) {
+    return CartItem(
+      cartId: map['cart_id'],
+      p_id: map['p_id'].toString(),
+      title: map['title'] ?? '',
+      subtitle: map['subtitle'] ?? '',
+      image: map['imageUrl'] ?? '',
+      price: (map['price'] as num).toDouble(),
+      quantity: map['quantity'],
+    );
+  }
 }
 
 class CartProvider extends ChangeNotifier {
-  final List<CartItem> _items = [];
-  List<CartItem> get items => _items;
+  List<CartItem> _cartItems = [];
 
-  int get uniqueItemCount => _items.length;
-  int get cartCount => _items.fold(0, (sum, item) => sum + item.quantity);
-  double get total => _items.fold(0, (sum, item) => sum + (item.price * item.quantity));
+  List<CartItem> get items => _cartItems;
 
-  void addItem(CartItem newItem) {
-    print("add item");
-    final index = _items.indexWhere((item) => item.p_id == newItem.p_id);
-    if (index >= 0) {
-      _items[index].quantity += 1;
-    } else {
-      _items.add(newItem);
+  int get uniqueItemCount => _cartItems.length;
+  int get cartCount => _cartItems.fold(0, (sum, item) => sum + item.quantity);
+  double get total => _cartItems.fold(0.0, (sum, item) => sum + (item.price * item.quantity));
+
+  int? _userId;
+
+  CartProvider();
+
+  void setUserId(int userId) {
+    if (_userId != userId) {
+      _userId = userId;
+      loadItems(userId);
     }
+  }
+
+  Future<void> loadItems(int userId) async {
+    print('dndhddhdddhhhhhhhhhhhhhhhhhhh : $_userId');
+    final cartData = await DBHelper.instance.getCartItems(userId);
+    _cartItems = cartData.map((item) => CartItem.fromMap(item)).toList();
     notifyListeners();
   }
 
-  void increaseQuantity(String id) {
-    print('increaseQuantity called for $id');
-    final index = _items.indexWhere((item) => item.p_id == id);
-    if (index != -1) {
-      _items[index].quantity++;
-      notifyListeners();
+  Future<void> addItem(String pId, int userId, {int quantity = 1}) async {
+    await DBHelper.instance.addOrUpdateCartItem(userId, int.parse(pId), quantity);
+    await loadItems(userId);
+  }
+
+  Future<void> increaseQuantity(int cartId, int userId) async {
+    print('increased: $cartId');
+    final item = _cartItems.firstWhere((item) => item.cartId == cartId, orElse: () => throw Exception("Item not found"));
+    await DBHelper.instance.updateCartItemQuantity(cartId, item.quantity + 1);
+    await loadItems(userId);
+  }
+
+  Future<void> decreaseQuantity(int cartId, int userId) async {
+    print('decreased: $cartId');
+    final item = _cartItems.firstWhere((item) => item.cartId == cartId, orElse: () => throw Exception("Item not found"));
+
+    if (item.quantity > 1) {
+      await DBHelper.instance.updateCartItemQuantity(cartId, item.quantity - 1);
+    } else {
+      await DBHelper.instance.removeCartItem(cartId);
     }
+
+    await loadItems(userId);
   }
 
-  void decreaseQuantity(String id) {
-    final index = _items.indexWhere((item) => item.p_id == id);
-    if (index != -1) {
-      if (_items[index].quantity > 1) {
-        _items[index].quantity--;
-      } else {
-        _items.removeAt(index);
-      }
-      notifyListeners();
-    }
+  Future<void> removeItem(int cartId, int userId) async {
+    print('removed : $cartId');
+    await DBHelper.instance.removeCartItem(cartId);
+    await loadItems(userId);
   }
 
-  bool isInCart(String id) {
-    return _items.any((item) => item.p_id == id);
+  Future<void> clearCart(int userId) async {
+    await DBHelper.instance.clearCart(userId);
+    await loadItems(userId);
   }
 
-  CartItem? getItem(String id) {
+  bool isInCart(String pId) {
+    return _cartItems.any((item) => item.p_id == pId);
+  }
+
+  CartItem? getItem(String pId) {
     try {
-      return _items.firstWhere((item) => item.p_id == id);
+      return _cartItems.firstWhere((item) => item.p_id == pId);
     } catch (_) {
       return null;
     }
   }
-
-  void removeItem(String id) {
-    _items.removeWhere((item) => item.p_id == id);
-    notifyListeners();
-  }
-
-  void clear() {
-    _items.clear();
-    notifyListeners();
-  }
 }
-
-// int _cartCount = 0;
-//
-// //int get cartCount => _cartCount;
-//
-// void addToCart() {
-//   _cartCount++;
-//   notifyListeners();
-// }
-//
-// void clearCart() {
-//   _cartCount = 0;
-//   notifyListeners();
-// }

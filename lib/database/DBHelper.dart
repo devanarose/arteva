@@ -18,7 +18,7 @@ class DBHelper{
 
   Future<Database> _initDb() async{
     final path = join(await getDatabasesPath(),'arteva.db');
-    return await openDatabase(path,version:2,onCreate: _onCreate,onUpgrade: _onUpgrade);
+    return await openDatabase(path,version:5,onCreate: _onCreate,onUpgrade: _onUpgrade);
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -43,28 +43,37 @@ class DBHelper{
     )
   ''');
 
-    await db.execute(''''
-      CREATE TABLE cart (
+    await db.execute('''
+      CREATE TABLE cart(
         cart_id INTEGER PRIMARY KEY AUTOINCREMENT,
         p_id INTEGER NOT NULL,
         quantity INTEGER NOT NULL,
         user_id INTEGER,
-        status text
-      ''');
+        status text )
+    ''');
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      await db.execute('ALTER TABLE products ADD COLUMN section TEXT');
+    if (newVersion == 5) {
+      await db.execute('''
+      CREATE TABLE IF NOT EXISTS cart(
+        cart_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        p_id INTEGER NOT NULL,
+        quantity INTEGER NOT NULL,
+        user_id INTEGER,
+        status TEXT
+      )
+    ''');
     }
   }
 
+
   ///cart
 
-  Future<void> addOrUpdateCartItem(int userId, int pId, int quantity) async {
+  Future<void>  addOrUpdateCartItem(int userId, int pId, int quantity) async {
     final dbClient = await db;
 
-    final existing = await dbClient.query('cart', where: 'user_id = ? AND p_id = ? AND status = ?', whereArgs: [userId, pId, 'active'], limit: 1,);
+    final existing = await dbClient.query('cart', where: 'user_id = ? AND p_id = ? AND status = ?', whereArgs: [userId, pId, 'active'], limit: 1,); // limit = only fetch atmost 1 row
 
     if (existing.isNotEmpty) {
       final existingQuantity = (existing.first['quantity'] ?? 0) as int;
@@ -82,11 +91,11 @@ class DBHelper{
   Future<List<Map<String, dynamic>>> getCartItems(int userId) async {
     final dbClient = await db;
     return await dbClient.rawQuery('''
-    SELECT cart.*, products.title, products.imageUrl, products.price
-    FROM cart
-    JOIN products ON cart.p_id = products.p_id
-    WHERE cart.user_id = ? AND cart.status = ?
-  ''', [userId, 'active']);
+      SELECT cart.*, products.title, products.imageUrl, products.price
+      FROM cart
+      JOIN products ON cart.p_id = products.p_id
+      WHERE cart.user_id = ? AND cart.status = ?
+    ''', [userId, 'active']);
   }
 
   Future<void> updateCartItemQuantity(int cartId, int quantity) async {

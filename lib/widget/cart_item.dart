@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/auth_provider.dart';
 import '../providers/cart_provider.dart';
 
 class CartItemWidget extends StatefulWidget {
@@ -27,6 +28,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final userId = Provider.of<AuthProvider>(context, listen: false).userId!;
     final cartProvider = Provider.of<CartProvider>(context);
 
     return Card(
@@ -76,17 +78,17 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.remove),
-                        onPressed: () => cartProvider.decreaseQuantity(widget.item.p_id),
+                        onPressed: () => cartProvider.decreaseQuantity(widget.item.cartId,userId),
                       ),
                       Text('${widget.item.quantity}', style: const TextStyle(fontSize: 16)),
                       IconButton(
                         icon: const Icon(Icons.add),
-                        onPressed: () => cartProvider.increaseQuantity(widget.item.p_id),
+                        onPressed: () => cartProvider.increaseQuantity(widget.item.cartId,userId),
                       ),
                       const Spacer(),
                       IconButton(
                         icon: const Icon(Icons.delete_outline, color: Colors.red),
-                        onPressed: () => cartProvider.removeItem(widget.item.p_id),
+                        onPressed: () => cartProvider.removeItem(widget.item.cartId,userId),
                       ),
                     ],
                   ),

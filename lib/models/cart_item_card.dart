@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/auth_provider.dart';
 import '../providers/cart_provider.dart';
 import '../screens/product_detail.dart';
 class CartItemm extends StatelessWidget {
@@ -19,12 +20,13 @@ class CartItemm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userId = Provider.of<AuthProvider>(context, listen: false).userId!;
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
 
     return Stack(
       children: [
         GestureDetector(
-          onTap: () {Navigator.push( context, MaterialPageRoute(builder: (_) => ProductDetail(p_id: item.p_id, title: item.title),),);
+          onTap: () { Navigator.push( context, MaterialPageRoute(builder: (_) => ProductDetail(p_id: item.p_id, title: item.title),),);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -100,12 +102,12 @@ class CartItemm extends StatelessWidget {
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.remove_circle_outline, color: Colors.teal),
-                                  onPressed: () => cartProvider.decreaseQuantity(item.p_id),
+                                  onPressed: () => cartProvider.decreaseQuantity(item.cartId,userId),
                                   splashRadius: 20,
                                 ),
                                 Selector<CartProvider, int>(
                                   selector: (_, provider) {
-                                    return provider.items.firstWhere((i) => i.p_id == item.p_id).quantity;
+                                    return provider.items.firstWhere((i) => i.cartId == item.cartId).quantity;
                                   },
                                   builder: (context, quantity, _) {
                                     return Text(
@@ -119,7 +121,7 @@ class CartItemm extends StatelessWidget {
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.add_circle_outline, color: Colors.teal),
-                                  onPressed: () => cartProvider.increaseQuantity(item.p_id),
+                                  onPressed: () => cartProvider.increaseQuantity(item.cartId,userId),
                                   splashRadius: 20,
                                 ),
                               ],
@@ -127,7 +129,7 @@ class CartItemm extends StatelessWidget {
                           ),
                           Selector<CartProvider, double>( //looking for change in cart
                             selector: (_, provider) {
-                              final currentItem = provider.items.firstWhere((i) => i.p_id == item.p_id);
+                              final currentItem = provider.items.firstWhere((i) => i.cartId == item.cartId);
                               return currentItem.price * currentItem.quantity;
                             },
                             builder: (context, itemTotalPrice, _) {
@@ -154,7 +156,7 @@ class CartItemm extends StatelessWidget {
           bottom: 45,
           left: 230,
           child: GestureDetector(
-            onTap: () => cartProvider.removeItem(item.p_id),
+            onTap: () => cartProvider.removeItem(item.cartId,userId),
             child: Container(
               decoration: const BoxDecoration(shape: BoxShape.circle),
               padding: const EdgeInsets.all(3),

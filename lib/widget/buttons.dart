@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/cart_item_card.dart';
+import '../providers/auth_provider.dart';
 import '../providers/cart_provider.dart';
 import '../screens/cart_page.dart';
 
@@ -23,32 +23,21 @@ class Buttons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cartItems = context.watch<CartProvider>().items;
+    final userIdStr = Provider.of<AuthProvider>(context, listen: false).userId;
+    if (userIdStr == null) {
+      return const Text("Please log in first");
+    }
+    final userId = userIdStr;
+    if (userId == null) {
+      return const Text("Invalid user ID");
+    }
+
     return Consumer<CartProvider>(
       builder: (context, cartProvider, _) {
         final isInCart = cartProvider.isInCart(p_id);
         final cartItem = cartProvider.getItem(p_id);
 
-        // void handleBuyNow() {
-        //   if (!isInCart) {
-        //     cartProvider.addItem(
-        //       CartItem(
-        //         p_id: p_id,
-        //         title: title,
-        //         subtitle: subtitle,
-        //         image: image,
-        //         price: price,
-        //       ),
-        //     );
-        //   }
-        //
-        //   WidgetsBinding.instance.addPostFrameCallback((_) {
-        //     print("navigating");
-        //     Navigator.pushNamed(context, CartPage.routeName);
-        //   });
-        // }
-
-        if (isInCart) {
+        if (isInCart && cartItem != null) {
           return Row(
             children: [
               Flexible(
@@ -74,17 +63,17 @@ class Buttons extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       InkWell(
-                        onTap: () => cartProvider.decreaseQuantity(p_id),
+                        onTap: () => cartProvider.decreaseQuantity(cartItem.cartId, userId),
                         child: Icon(Icons.remove, size: 20, color: Theme.of(context).primaryColor),
                       ),
                       const SizedBox(width: 16),
                       Text(
-                        '${cartItem?.quantity ?? 1}',
+                        '${cartItem.quantity}',
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(width: 16),
                       InkWell(
-                        onTap: () => cartProvider.increaseQuantity(p_id),
+                        onTap: () => cartProvider.increaseQuantity(cartItem.cartId, userId),
                         child: Icon(Icons.add, size: 20, color: Theme.of(context).primaryColor),
                       ),
                     ],
@@ -94,8 +83,7 @@ class Buttons extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () => handleBuyNow(context),
-                  // onPressed: handleBuyNow,
+                  onPressed: () => handleBuyNow(context, userId),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     shape: RoundedRectangleBorder(
@@ -118,16 +106,8 @@ class Buttons extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    cartProvider.addItem(
-                      CartItem(
-                        p_id: p_id,
-                        title: title,
-                        subtitle: subtitle,
-                        image: image,
-                        price: price,
-                      ),
-                    );
+                  onPressed: () async {
+                    await cartProvider.addItem(p_id, userId);
                   },
                   icon: const Icon(Icons.shopping_cart_outlined, size: 20),
                   label: const Text(
@@ -147,8 +127,7 @@ class Buttons extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () => handleBuyNow(context),
-                  // onPressed: handleBuyNow,
+                  onPressed: () => handleBuyNow(context, userId),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orangeAccent,
                     shape: RoundedRectangleBorder(
@@ -169,26 +148,15 @@ class Buttons extends StatelessWidget {
       },
     );
   }
-  void handleBuyNow(BuildContext context) {
+
+  void handleBuyNow(BuildContext context, int userId) async {
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
     final isInCart = cartProvider.isInCart(p_id);
-
     if (!isInCart) {
-      cartProvider.addItem(
-        CartItem(
-          p_id: p_id,
-          title: title,
-          subtitle: subtitle,
-          image: image,
-          price: price,
-        ),
-      );
+      await cartProvider.addItem(p_id, userId);
     }
-
-    // Use microtask instead of postFrameCallback
     Future.microtask(() {
       Navigator.pushNamed(context, CartPage.routeName);
     });
   }
-
 }

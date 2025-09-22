@@ -28,7 +28,18 @@ class ArtEva extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => CartProvider()),
+        // ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, CartProvider>(
+          create: (_) => CartProvider(),
+          update: (_, authProvider, cartProvider) {
+            cartProvider ??= CartProvider();
+            final userId = authProvider.userId;
+            if (userId != null) {
+              cartProvider.setUserId(userId);
+            }
+            return cartProvider;
+          },
+        ),
         ChangeNotifierProvider(create: (_) => WishlistProvider()),
       ],
       child: Consumer<AuthProvider>(

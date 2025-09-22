@@ -10,6 +10,8 @@ class AuthProvider with ChangeNotifier {
 
   Map<String, dynamic>? get user => _user;
   String? get token => _token;
+  int? get userId => _user?['id'];
+
 
   Future<void> loadUserFromPrefs() async { // without this the welcome,-------! will be shown
     final prefs = await SharedPreferences.getInstance();

@@ -12,7 +12,6 @@ import '../models/bottom_navbar_design.dart';
 import '../providers/cart_provider.dart';
 
 import '../widget/categorygrid_widget.dart';
-import 'package:badges/badges.dart' as badges;
 
 import 'add_category.dart';
 import 'add_product.dart';
@@ -102,9 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               offset: Offset(-30, 0),
                               child: IconButton(
                                 icon: Icon(Icons.favorite,
-                                    color: _currentIndex == 1
-                                        ? Theme.of(context).primaryColor
-                                        : Colors.grey),
+                                    color: _currentIndex == 1 ? Theme.of(context).primaryColor : Colors.grey),
                                 onPressed: () => setState(() => _currentIndex = 1),
                               ),
                             ),
@@ -112,17 +109,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               offset: Offset(30, 0),
                               child: IconButton(
                                 icon: Icon(Icons.category_sharp,
-                                    color: _currentIndex == 3
-                                        ? Theme.of(context).primaryColor
-                                        : Colors.grey),
+                                    color: _currentIndex == 3 ? Theme.of(context).primaryColor : Colors.grey),
                                 onPressed: () => setState(() => _currentIndex = 3),
                               ),
                             ),
                             IconButton(
                               icon: Icon(Icons.person_2_rounded,
-                                  color: _currentIndex == 4
-                                      ? Theme.of(context).primaryColor
-                                      : Colors.grey),
+                                  color: _currentIndex == 4 ? Theme.of(context).primaryColor : Colors.grey),
                               onPressed: () => setState(() => _currentIndex = 4),
                             ),
                           ],
