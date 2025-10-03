@@ -64,4 +64,6 @@ class AuthProvider with ChangeNotifier {
       return false;
     }
   }
+  bool get isLoggedIn => _token != null && _user != null;
+
 }

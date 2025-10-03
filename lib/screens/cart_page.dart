@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -30,11 +31,11 @@ class _cartPageState extends State<CartPage> {
     final cartItems = context.watch<CartProvider>().items;
     final userId = Provider.of<AuthProvider>(context, listen: false).userId;
     return Scaffold(
-      appBar: AppBar(
+      appBar: !kIsWeb ? AppBar(
         title: Text('My Cart ${cartItems.length}'),
         foregroundColor: Colors.black,
         backgroundColor: const Color(0xFFF1F1F6),
-      ),
+      ) :null,
       body: cartItems.isEmpty
           ? Center(
         child: Column(

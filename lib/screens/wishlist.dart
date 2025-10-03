@@ -1,4 +1,5 @@
 import 'package:erp_demo/screens/product_detail.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -6,6 +7,7 @@ import '../providers/wishlist_provider.dart';
 import '../widget/product_card.dart';
 
 class Wishlist extends StatelessWidget {
+  static final String route = '/wishlist';
   const Wishlist({super.key});
 
   @override
@@ -14,11 +16,13 @@ class Wishlist extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
+      appBar: !kIsWeb
+          ? AppBar(
         title: const Text('Your Wishlist'),
         backgroundColor: Colors.grey,
         foregroundColor: Colors.white,
-      ),
+      )
+          : null,
       body: wishlistItems.isEmpty
           ? const Center(child: Text('Your wishlist is empty'))
           : Padding(

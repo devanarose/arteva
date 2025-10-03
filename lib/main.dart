@@ -1,22 +1,36 @@
+import 'dart:io';
+
 import 'package:erp_demo/providers/cart_provider.dart';
 import 'package:erp_demo/providers/wishlist_provider.dart';
 import 'package:erp_demo/screens/cart_page.dart';
-import 'package:erp_demo/screens/product_detail.dart';
+import 'package:erp_demo/screens/wishlist.dart';
+import 'package:erp_demo/widget/account.dart';
+import 'package:erp_demo/widget/categories.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 import 'providers/auth_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/welcome_screen.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  FlutterNativeSplash.preserve(widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
+  if (kIsWeb) {
+    print("Running on Web Browser");
+  } else if (Platform.isAndroid) {
+    print("Running on Android");
+  } else {
+    print("Running on another platform");
+  }
 
+  FlutterNativeSplash.preserve(widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
+  setPathUrlStrategy();
   runApp(const ArtEva());
 }
 
@@ -100,20 +114,24 @@ class ArtEva extends StatelessWidget {
 
                 if (snapshot.hasData && snapshot.data == true) {
                   authProvider.loadUserFromPrefs();
-                  return const HomeScreen();
+                  return HomeScreen();
                 } else {
                   return WelcomeScreen();
                 }
               },
             ),
 
-
             routes: {
-              '/homescreen': (context) => const HomeScreen(),
+              // '/homescreen': (context) => const HomeScreen(),
               LoginScreen.route: (context) => LoginScreen(),
+              HomeScreen.route: (context) => HomeScreen(index: 0),
+              Wishlist.route: (context) => HomeScreen(index: 1),
               '/signup': (context) => SignupScreen(),
               '/welcome': (context) => WelcomeScreen(),
               '/cartpage': (context) => CartPage(),
+              '/categories': (context) =>Categories(),
+              // '/wishlist' : (context) => Wishlist(),
+              '/account' : (context) => AccountPage(),
             },
           );
         },

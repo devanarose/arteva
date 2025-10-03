@@ -1,4 +1,3 @@
-import 'package:erp_demo/providers/cart_provider.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

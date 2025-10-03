@@ -39,6 +39,11 @@ class _CategoriesGridState extends State<CategoriesGrid> {
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text("No categories available."));
+          // return SizedBox(
+          //   width: double.infinity,
+          //   height: 560,
+          //   child: const Center(child: Text("No categories available.")),
+          // );
         }
 
         final categories = snapshot.data!;

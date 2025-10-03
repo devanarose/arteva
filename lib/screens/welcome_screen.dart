@@ -39,42 +39,49 @@ class WelcomeScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               Spacer(flex: 3),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, LoginScreen.route);
-                        },
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(200, 50),
-                          side: BorderSide(color: Colors.white),
-                          padding: EdgeInsets.symmetric(vertical: 16),
+              Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: 700,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, LoginScreen.route);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size(200, 50),
+                              side: const BorderSide(color: Colors.white),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: const Text('Sign in', style: TextStyle(color: Colors.white)),
+                          ),
                         ),
-                        child: Text('Sign in', style: TextStyle(color: Colors.white)),
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/signup');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(200, 50),
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.blue,
-                          padding: EdgeInsets.symmetric(vertical: 16),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/signup');
+                            },
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(200, 50),
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.blue,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: const Text('Sign up'),
+                          ),
                         ),
-                        child: Text('Sign up'),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
             ],
           ),
         ],

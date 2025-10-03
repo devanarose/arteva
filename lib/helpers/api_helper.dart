@@ -20,8 +20,6 @@ class APIHelper {
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-
-
         print(jsonData);
         return {
           'status': true,
