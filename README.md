@@ -1,12 +1,12 @@
-Arteva: Art Supplies E-Commerce Store
+### Arteva: Art Supplies E-Commerce Store
 
-Arteva is an open-source project aimed at building a cross-platform e-commerce application for art supplies. Designed with Flutter, it supports multiple platforms, including Android, iOS, Web, Linux, macOS, and Windows. The project is structured to facilitate easy customization and scalability, making it ideal for developers interested in creating or contributing to a digital storefront for art materials.
+Arteva is an open-source project aimed at building a cross-platform e-commerce application for art supplies. Designed with Flutter, it supports multiple platforms. The project is structured to facilitate easy customization and scalability, making it ideal for developers interested in creating or contributing to a digital storefront for art materials.
 
 🚀 Features
 
-Cross-Platform Support: Developed using Flutter, ensuring a consistent experience across Android, iOS, Web, Linux, macOS, and Windows.
+Cross-Platform Support: Developed using Flutter, ensuring a consistent experience across Android, Web and Windows.
 
-Modular Architecture: Organized into platform-specific directories (android, ios, web, etc.) for easy maintenance and scalability.
+Modular Architecture: Organized into platform-specific directories (android, web.) for easy maintenance and scalability.
 
 Customizable UI: Designed with flexibility in mind, allowing for easy adjustments to suit different branding and design requirements.
 
