@@ -1,3 +1,4 @@
+import 'package:erp_demo/widget/webheader_split.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
@@ -28,8 +29,8 @@ class WebHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
           color: Colors.black,
-
-          child: isMobile ? Row(
+          child: isMobile
+              ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
@@ -52,14 +53,14 @@ class WebHeader extends StatelessWidget {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    const Icon(Icons.shopping_cart_outlined, color: Colors.white, size: 26),
+                    Icon(Icons.shopping_cart_outlined, color: currentRoute == '/cartpage' ? Theme.of(context).primaryColor  : Colors.white, size: 26),
                     if (cartProvider.uniqueItemCount > 0)
                       Positioned(
                         right: 0, top: 0,
                         child: Container(
                           padding: const EdgeInsets.all(5),
                           decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle,),
-                          constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                          constraints: const BoxConstraints(minWidth: 18, minHeight: 18,),
                           child: Text(
                             '${cartProvider.uniqueItemCount}',
                             style: const TextStyle(
@@ -96,23 +97,24 @@ class WebHeader extends StatelessWidget {
               ),
               Row(
                 children: [
-                  _buildNavButton(context, label: "Home", route: '/homescreen'),
-                  _buildNavButton(context, label: "Wishlist", route: '/wishlist'),
-                  _buildNavButton(context, label: "Categories", route: '/categories'),
+                  WebHeaderSplit(
+                    currentRoute: currentRoute,
+                    onNavigate: onNavigate,
+                  ),
                   const SizedBox(width: 24),
                   GestureDetector(
                     onTap: () => Navigator.pushNamed(context, '/cartpage'),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        const Icon(Icons.shopping_cart_outlined, color: Colors.white, size: 26),
+                        Icon(Icons.shopping_cart_outlined, color: currentRoute == '/cartpage' ? Theme.of(context).primaryColor  : Colors.white, size: 26),
                         if (cartProvider.uniqueItemCount > 0)
                           Positioned(
                             right: 0, top: 0,
                             child: Container(
                               padding: const EdgeInsets.all(5),
                               decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle,),
-                              constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                              constraints: const BoxConstraints(minWidth: 18,minHeight: 18,),
                               child: Text(
                                 '${cartProvider.uniqueItemCount}',
                                 style: const TextStyle(
@@ -140,53 +142,22 @@ class WebHeader extends StatelessWidget {
             ],
           ),
         ),
-
-       if (isMobile)
-        Container(
-          width: double.infinity,
-          height: 44,
-          color: Colors.grey[900],
-          alignment: Alignment.center,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                _buildNavButton(context, label: "Home", route: '/homescreen'),
-                _buildNavButton(context, label: "Wishlist", route: '/wishlist'),
-                _buildNavButton(context, label: "Categories", route: '/categories'),
-              ],
+        if (isMobile)
+          Container(
+            width: double.infinity,
+            height: 44,
+            color: Colors.grey[900],
+            alignment: Alignment.center,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: WebHeaderSplit(
+                currentRoute: currentRoute,
+                onNavigate: onNavigate,
+              ),
             ),
           ),
-        ),
       ],
-    );
-  }
-
-  Widget _buildNavButton(BuildContext context, {
-    required String label,
-    required String route,
-  }) {
-    final bool isActive = currentRoute == route;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6.0),
-      child: TextButton(
-        style: TextButton.styleFrom(
-          backgroundColor: isActive ? Colors.white.withValues(alpha: 0.1) : Colors.transparent,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        ),
-        onPressed: () => onNavigate(route),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isActive ? Theme.of(context).primaryColor : Colors.white,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            fontSize: 14,
-          ),
-        ),
-      ),
     );
   }
 }

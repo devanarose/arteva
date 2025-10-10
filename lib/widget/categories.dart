@@ -6,6 +6,8 @@ import '../screens/category_page.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Categories extends StatefulWidget {
+  static final String route = '/categories';
+
   const Categories({super.key});
 
   @override

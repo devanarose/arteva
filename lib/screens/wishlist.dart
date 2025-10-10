@@ -1,4 +1,5 @@
 import 'package:erp_demo/screens/product_detail.dart';
+import 'package:erp_demo/widget/web_header.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,35 +24,50 @@ class Wishlist extends StatelessWidget {
         foregroundColor: Colors.white,
       )
           : null,
-      body: wishlistItems.isEmpty
-          ? const Center(child: Text('Your wishlist is empty'))
-          : Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
-        child: GridView.builder(
-          padding: const EdgeInsets.only(bottom: 90),
-          itemCount: wishlistItems.length,
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 230,
-            crossAxisSpacing: 2,
-            mainAxisSpacing: 2,
-            childAspectRatio: 0.5,
+      body: Column(
+        children: [
+          // if (kIsWeb)
+          //   WebHeader(
+          //     currentRoute: route,
+          //     onNavigate: (selectedRoute) {
+          //       if (selectedRoute != route) {
+          //         Navigator.pushReplacementNamed(context, selectedRoute);
+          //       }
+          //     },
+          //   ),
+          Expanded(
+            child: wishlistItems.isEmpty
+                ? const Center(child: Text('Your wishlist is empty'))
+                : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
+              child: GridView.builder(
+                padding: const EdgeInsets.only(bottom: 90),
+                itemCount: wishlistItems.length,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 230,
+                  crossAxisSpacing: 2,
+                  mainAxisSpacing: 2,
+                  childAspectRatio: 0.5,
+                ),
+                itemBuilder: (context, index) {
+                  final item = wishlistItems[index];
+                  return ProductCard(
+                    p_id: item.p_id,
+                    imageUrl: item.image,
+                    title: item.title,
+                    subtitle: item.subtitle,
+                    price: item.price,
+                    description: '',
+                    isWishlistView: true,
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetail(p_id: item.p_id, title: item.title),),);
+                    },
+                  );
+                },
+              ),
+            ),
           ),
-          itemBuilder: (context, index) {
-            final item = wishlistItems[index];
-            return ProductCard(
-              p_id: item.p_id,
-              imageUrl: item.image,
-              title: item.title,
-              subtitle: item.subtitle,
-              price: item.price,
-              description: '',
-              isWishlistView: true,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetail(p_id: item.p_id, title: item.title,),),);
-              },
-            );
-          },
-        ),
+        ],
       ),
     );
   }

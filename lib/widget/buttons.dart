@@ -156,7 +156,7 @@ class Buttons extends StatelessWidget {
       await cartProvider.addItem(p_id, userId);
     }
     Future.microtask(() {
-      Navigator.pushNamed(context, CartPage.routeName);
+      Navigator.pushNamed(context, CartPage.route);
     });
   }
 }

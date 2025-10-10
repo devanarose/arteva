@@ -29,10 +29,15 @@ void main() async {
     print("Running on another platform");
   }
 
-  FlutterNativeSplash.preserve(widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
+  if(!kIsWeb){
+    FlutterNativeSplash.preserve(widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
+  }
   setPathUrlStrategy();
+
   runApp(const ArtEva());
 }
+
+// flutter run -d chrome --web-port=5000
 
 class ArtEva extends StatelessWidget {
   const ArtEva({super.key});
@@ -110,8 +115,9 @@ class ArtEva extends StatelessWidget {
             home: FutureBuilder<bool>(
               future: authProvider.isAuth,
               builder: (context, snapshot) {
-                FlutterNativeSplash.remove();
-
+                if(!kIsWeb){
+                  FlutterNativeSplash.remove();
+                }
                 if (snapshot.hasData && snapshot.data == true) {
                   authProvider.loadUserFromPrefs();
                   return HomeScreen();
@@ -126,10 +132,12 @@ class ArtEva extends StatelessWidget {
               LoginScreen.route: (context) => LoginScreen(),
               HomeScreen.route: (context) => HomeScreen(index: 0),
               Wishlist.route: (context) => HomeScreen(index: 1),
+              Categories.route: (context) => HomeScreen(index: 3),
+              CartPage.route: (context) => HomeScreen(index: 2),
               '/signup': (context) => SignupScreen(),
               '/welcome': (context) => WelcomeScreen(),
-              '/cartpage': (context) => CartPage(),
-              '/categories': (context) =>Categories(),
+              // '/cartpage': (context) => CartPage(),
+              // '/categories': (context) =>Categories(),
               // '/wishlist' : (context) => Wishlist(),
               '/account' : (context) => AccountPage(),
             },

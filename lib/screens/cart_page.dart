@@ -14,7 +14,7 @@ import 'product_detail.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
-  static const routeName = '/cartpage';
+  static final String route = '/cartpage';
 
   @override
   State<CartPage> createState() => _cartPageState();

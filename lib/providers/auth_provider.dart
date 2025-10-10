@@ -12,7 +12,6 @@ class AuthProvider with ChangeNotifier {
   String? get token => _token;
   int? get userId => _user?['id'];
 
-
   Future<void> loadUserFromPrefs() async { // without this the welcome,-------! will be shown
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('access_token');
@@ -23,7 +22,6 @@ class AuthProvider with ChangeNotifier {
       _user = jsonDecode(userJson);
       notifyListeners();
     }
-
     //print('loged in initially');
   }
 

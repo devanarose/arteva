@@ -1,3 +1,5 @@
+import 'dart:ui' as web;
+
 import 'package:erp_demo/providers/auth_provider.dart';
 import 'package:erp_demo/screens/wishlist.dart';
 import 'package:erp_demo/widget/categories.dart';
@@ -49,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     _currentIndex = widget.index;
+    _currentRoute = indexToRoute[widget.index]??'';
     super.initState();
   }
 
@@ -80,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Column(
           children: [
-            if (kIsWeb)
+            if (kIsWeb && _currentRoute != '/homescreen0')
               WebHeader(
                 currentRoute: _currentRoute,
                 onNavigate: _webTabSelected,
@@ -111,19 +114,19 @@ class _HomeScreenState extends State<HomeScreen> {
   void _webTabSelected(String route) {
     // if(kIsWeb){
       updateBrowserUrl(route);
-    //   Navigator.pushNamed(context, route);
-    // }else{
+      Navigator.pushNamed(context, route);
       setState(() {
         _currentRoute = route;
         _currentIndex = routeToIndex[route] ?? 0;
         print('route : $route');
       });
+    // }else{
     // }
   }
   void updateBrowserUrl(String route) {
-    if(kIsWeb){
-      // history.pushState(null, null, '?arg1=1');
-    }
+    // if(kIsWeb){
+    //   history.pushState(null, null, '?arg1=1');
+    // }
     // final uri = Uri.base.replace(path: route);
     // web.window.history.pushState(null, '', uri.toString());
   }
@@ -256,7 +259,6 @@ class _HomeScreenState extends State<HomeScreen> {
           BannerSlider(),
           Products(),
           NewArrivals()
-          // BannerSlider(),
         ],
       ),
     );
