@@ -1,4 +1,3 @@
-import 'dart:ui' as web;
 
 import 'package:erp_demo/providers/auth_provider.dart';
 import 'package:erp_demo/screens/wishlist.dart';
@@ -114,7 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void _webTabSelected(String route) {
     // if(kIsWeb){
       updateBrowserUrl(route);
-      Navigator.pushNamed(context, route);
+      // Navigator.pushNamed(context, route);
+      Navigator.of(context).push(_noAnimation(route));
       setState(() {
         _currentRoute = route;
         _currentIndex = routeToIndex[route] ?? 0;
@@ -286,4 +286,16 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  Route _noAnimation(String routeName) {
+    return PageRouteBuilder(
+      settings: RouteSettings(name: routeName),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return HomeScreen(index: routeToIndex[routeName] ?? 0);
+      },
+      transitionDuration: Duration.zero,
+      reverseTransitionDuration: Duration.zero,
+    );
+  }
+
 }
