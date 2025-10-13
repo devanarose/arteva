@@ -251,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }else {
           return <Widget>[];
         }
-        },
+      },
       body: ListView(
         padding: const EdgeInsets.only(bottom: 100),
         children: const [

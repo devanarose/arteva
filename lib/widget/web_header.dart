@@ -101,34 +101,6 @@ class WebHeader extends StatelessWidget {
                     currentRoute: currentRoute,
                     onNavigate: onNavigate,
                   ),
-                  const SizedBox(width: 24),
-                  GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/cartpage'),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Icon(Icons.shopping_cart_outlined, color: currentRoute == '/cartpage' ? Theme.of(context).primaryColor  : Colors.white, size: 26),
-                        if (cartProvider.uniqueItemCount > 0)
-                          Positioned(
-                            right: 0, top: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(5),
-                              decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle,),
-                              constraints: const BoxConstraints(minWidth: 18,minHeight: 18,),
-                              child: Text(
-                                '${cartProvider.uniqueItemCount}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
                   const SizedBox(width: 29),
                   Row(
                     children: [
