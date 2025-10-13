@@ -5,6 +5,7 @@ import 'package:erp_demo/widget/categories.dart';
 import 'package:erp_demo/widget/banner_slider.dart';
 import 'package:erp_demo/widget/new_arrivals.dart';
 import 'package:erp_demo/widget/products.dart';
+import 'package:erp_demo/widget/web_product.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -258,7 +259,8 @@ class _HomeScreenState extends State<HomeScreen> {
           Categories(),
           BannerSlider(),
           Products(),
-          NewArrivals()
+          NewArrivals(),
+          if(kIsWeb) WebProducts(),
         ],
       ),
     );
