@@ -5,7 +5,7 @@ class WebCartItem {
   final String title;
   final String subtitle;
   final String image;
-  final int price;
+  final double price;
   int quantity;
 
   WebCartItem({

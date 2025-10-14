@@ -6,7 +6,8 @@ import '../providers/web_cart_provider.dart';
 import '../providers/wishlist_provider.dart';
 
 class WebProductCard extends StatefulWidget {
-  final String p_id,imageUrl,title,subtitle,price,description;
+  final String p_id,imageUrl,title,subtitle,description;
+  final double price;
   final VoidCallback? onTap;
   final bool isWishlistView, isCategoryView;
 
@@ -85,7 +86,7 @@ class _WebProductCardState extends State<WebProductCard> {
             ),
             const SizedBox(height: 6),
             Text(
-              widget.price,
+              'Rs ${widget.price.toStringAsFixed(2)}',
               style: TextStyle(
                 color: Theme.of(context).primaryColor,
                 fontWeight: FontWeight.bold,
@@ -201,7 +202,7 @@ class _WebProductCardState extends State<WebProductCard> {
                               title: widget.title,
                               subtitle: widget.subtitle,
                               image: widget.imageUrl,
-                              price: int.parse(widget.price.replaceAll(RegExp(r'[^0-9]'), '')),
+                              price: widget.price,
                             ),
                           );
                         },

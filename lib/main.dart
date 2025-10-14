@@ -16,6 +16,7 @@ import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/welcome_screen.dart';
+import 'providers/web_cart_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
@@ -47,6 +48,7 @@ class ArtEva extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => WebCartProvider()),
         // ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProxyProvider<AuthProvider, CartProvider>(
           create: (_) => CartProvider(),
