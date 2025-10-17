@@ -23,9 +23,9 @@ class _NewArrivalsState extends State<NewArrivals> {
   Future<void> loadNewArrivals() async {
     final allProducts = await DBHelper.instance.getAllProducts();
     final newArrivals = allProducts.where((p) => p.section.toLowerCase() == 'new').toList();
-    setState(() {
-      new_products = newArrivals;
-    });
+    // setState(() {
+      // new_products = newArrivals;
+    // });
   }
 
   @override

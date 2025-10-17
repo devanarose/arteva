@@ -23,10 +23,9 @@ class _ProductsState extends State<Products> {
   Future<void> loadProducts() async {
     final allProducts = await DBHelper.instance.getAllProducts();
     final popular = allProducts.where((p) => p.section.toLowerCase() == 'popular').toList();
-    setState(() {
-      products = popular;
-
-    });
+    // setState(() {
+    //   products = popular;
+    // });
   }
 
   @override

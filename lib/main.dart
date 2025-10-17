@@ -20,7 +20,7 @@ import 'providers/web_cart_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // WidgetsFlutterBinding.ensureInitialized();
 
   if (kIsWeb) {
     print("Running on Web Browser");
@@ -115,19 +115,33 @@ class ArtEva extends StatelessWidget {
               useMaterial3: true,
             ),
             home: FutureBuilder<bool>(
-              future: authProvider.isAuth,
+              future: authProvider.isAuthenticated(),
               builder: (context, snapshot) {
-                if(!kIsWeb){
+                if (!kIsWeb) {
                   FlutterNativeSplash.remove();
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasData && snapshot.data == true) {
                   authProvider.loadUserFromPrefs();
+                  print('guest has data');
                   return HomeScreen();
                 } else {
-                  return WelcomeScreen();
+                  return FutureBuilder(
+                    future: authProvider.isAuthenticated(),
+                    builder: (context, guestSnapshot) {
+                      if (guestSnapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      print('after calling guest()');
+                      return HomeScreen();
+                    },
+                  );
                 }
               },
             ),
+
 
             routes: {
               // '/homescreen': (context) => const HomeScreen(),
