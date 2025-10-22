@@ -8,5 +8,7 @@ class BannerItem {
     required this.title,
     required this.subtitle,
   });
+
+
 }
 

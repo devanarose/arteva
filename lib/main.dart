@@ -124,24 +124,40 @@ class ArtEva extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasData && snapshot.data == true) {
-                  authProvider.loadUserFromPrefs();
-                  print('guest has data');
                   return HomeScreen();
                 } else {
-                  return FutureBuilder(
-                    future: authProvider.isAuthenticated(),
-                    builder: (context, guestSnapshot) {
-                      if (guestSnapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      print('after calling guest()');
-                      return HomeScreen();
-                    },
-                  );
+                  return const Center(child: Text("Failed to authenticate"));
                 }
               },
             ),
 
+            // home: FutureBuilder<bool>(
+            //   future: authProvider.isAuthenticated(),
+            //   builder: (context, snapshot) {
+            //     if (!kIsWeb) {
+            //       FlutterNativeSplash.remove();
+            //     }
+            //     if (snapshot.connectionState == ConnectionState.waiting) {
+            //       return const Center(child: CircularProgressIndicator());
+            //     }
+            //     if (snapshot.hasData && snapshot.data == true) {
+            //       authProvider.loadUserFromPrefs();
+            //       print('guest has data');
+            //       return HomeScreen();
+            //     } else {
+            //       return FutureBuilder(
+            //         future: authProvider.isAuthenticated(),
+            //         builder: (context, guestSnapshot) {
+            //           if (guestSnapshot.connectionState == ConnectionState.waiting) {
+            //             return const Center(child: CircularProgressIndicator());
+            //           }
+            //           print('after calling guest()');
+            //           return HomeScreen();
+            //         },
+            //       );
+            //     }
+            //   },
+            // ),
 
             routes: {
               // '/homescreen': (context) => const HomeScreen(),

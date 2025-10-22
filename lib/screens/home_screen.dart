@@ -160,25 +160,26 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Stack(
                       children: [
                         Positioned(
-                          top: paddingTop + 8,
+                          top: paddingTop + 10,
                           left: 20,
                           child: Row(
                             children: [
-                              Consumer<AuthProvider>(
-                                builder: (context, authProvider, _) {
-                                  final imageUrl = authProvider.user?['image'];
-                                  return imageUrl != null
-                                      ? CircleAvatar(
-                                    backgroundImage: NetworkImage(imageUrl),
-                                    radius: 18,
-                                  )
-                                      : const CircleAvatar(
-                                    radius: 18,
-                                    backgroundColor: Colors.white,
-                                    child: Icon(Icons.person, color: Colors.black),
-                                  );
-                                },
-                              ),
+                              Icon(Icons.palette, color: Colors.white, size: 32),
+                              // Consumer<AuthProvider>(
+                              //   builder: (context, authProvider, _) {
+                              //     final imageUrl = authProvider.user?['image'];
+                              //     return imageUrl != null
+                              //         ? CircleAvatar(
+                              //       backgroundImage: NetworkImage(imageUrl),
+                              //       radius: 18,
+                              //     )
+                              //         : const CircleAvatar(
+                              //       radius: 18,
+                              //       backgroundColor: Colors.white,
+                              //       child: Icon(Icons.person, color: Colors.black),
+                              //     );
+                              //   },
+                              // ),
                               const SizedBox(width: 10),
                               const Text(
                                 'ArtEva',
@@ -193,26 +194,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
 
-                        Consumer<AuthProvider>(
-                          builder: (context, authProvider, _) {
-                            final username = authProvider.user?['firstName'] ?? '';
-                            return Positioned(
-                              top: paddingTop + 60 - (20 * (1.0 - collapsePercent)),
-                              left: 65,
-                              child: Opacity(
-                                opacity: collapsePercent.clamp(0.0, 1.0),
-                                child: Text(
-                                  'Hi $username!',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Theme.of(context).primaryColor,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                        // Consumer<AuthProvider>(
+                        //   builder: (context, authProvider, _) {
+                        //     final username = authProvider.user?['firstName'] ?? '';
+                        //     return Positioned(
+                        //       top: paddingTop + 60 - (20 * (1.0 - collapsePercent)),
+                        //       left: 65,
+                        //       child: Opacity(
+                        //         opacity: collapsePercent.clamp(0.0, 1.0),
+                        //         child: Text(
+                        //           'Hi $username!',
+                        //           style: TextStyle(
+                        //             fontSize: 14,
+                        //             color: Theme.of(context).primaryColor,
+                        //             fontWeight: FontWeight.w500,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
 
 
                         if (collapsePercent > 0.2)
@@ -256,9 +257,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 100),
         children: const [
-          // Categories(),
-          // BannerSlider(),
-          // Products(),
+          Categories(),
+          BannerSlider(),
+          Products(),
           // NewArrivals(),
           if(kIsWeb) WebProducts(),
         ],

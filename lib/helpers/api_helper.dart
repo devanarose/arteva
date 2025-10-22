@@ -5,13 +5,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class APIHelper {
   static const String baseUrl = 'https://admin.abemart.in/api';
 
-  static Future<Map<String, dynamic>> guestApi() async {
+  static Future<Map<String, dynamic>> guest() async {
     final url = Uri.parse('$baseUrl/guest');
 
     try {
       final response = await http.post(url);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode >= 200 && response.statusCode < 300) {
         final jsonData = jsonDecode(response.body);
 
         final token = jsonData['data']['token'];
@@ -40,6 +40,83 @@ class APIHelper {
       }
     } catch (e) {
       print(e);
+      return {
+        'status': false,
+        'message': 'Something went wrong: $e',
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> banner() async {
+    final url = Uri.parse('$baseUrl/banners');
+    try {
+      final response = await http.get(url);
+      print('api response status: ${response.statusCode}');
+      // print(' API Response Body: ${response.body}');
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final List<dynamic> jsonData = jsonDecode(response.body);
+
+        final banners = jsonData.map((item) => {
+          'banner_id': item['banner_id'],
+          'banner_name': item['banner_name'],
+          'banner_image': item['banner_image'],
+          'banner_link': item['banner_link'],
+          'banner_link_type': item['banner_link_type'],
+        }).toList();
+
+        print('bannerrrr: ');
+        print(banners);
+        return {
+          'status': true,
+          'message': 'banner image loaded',
+          'data': banners,
+        };
+      } else {
+        return {
+          'status': false,
+          'message': 'Banner fetch failed: ${response.body}',
+        };
+      }
+    } catch (e) {
+      print("Banner API error: $e");
+      return {
+        'status': false,
+        'message': 'Something went wrong: $e',
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> category() async {
+    final url = Uri.parse('$baseUrl/categories');
+    try{
+      final response = await http.post(url);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final List<dynamic> jsonData = jsonDecode(response.body);
+
+        final filteredData = jsonData.where((item) => item['category_image'] != null);
+
+        final categories = filteredData.map((item) => {
+          'category_id': item['category_id'],
+          'category_name': item['category_name'],
+          'category_image': item['category_image'],
+        }).toList();
+
+        print('categories: ');
+        print(categories);
+        return {
+          'status': true,
+          'message': 'categories image loaded',
+          'data': categories,
+        };
+      } else {
+        return {
+          'status': false,
+          'message': 'categories fetch failed: ${response.body}',
+        };
+      }
+    } catch(e){
+      print("categories API error: $e");
       return {
         'status': false,
         'message': 'Something went wrong: $e',

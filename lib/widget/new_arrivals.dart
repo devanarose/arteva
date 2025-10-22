@@ -4,28 +4,28 @@ import '../models/product_item.dart';
 import '../screens/product_detail.dart';
 import 'product_card.dart';
 
-class NewArrivals extends StatefulWidget {
+class NewArrivals extends StatelessWidget {
   const NewArrivals({super.key});
 
-  @override
-  State<NewArrivals> createState() => _NewArrivalsState();
-}
+  // List<ProductItem> new_products = [];
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   loadNewArrivals();
+  // }
+  //
+  // Future<void> loadNewArrivals() async {
+  //   final allProducts = await DBHelper.instance.getAllProducts();
+  //   final newArrivals = allProducts.where((p) => p.section.toLowerCase() == 'new').toList();
+  //   setState(() {
+  //     new_products = newArrivals;
+  //   });
+  // }
 
-class _NewArrivalsState extends State<NewArrivals> {
-  List<ProductItem> new_products = [];
-
-  @override
-  void initState() {
-    super.initState();
-    loadNewArrivals();
-  }
-
-  Future<void> loadNewArrivals() async {
+  Future<List<ProductItem>> _fetchNewArrivals() async {
     final allProducts = await DBHelper.instance.getAllProducts();
-    final newArrivals = allProducts.where((p) => p.section.toLowerCase() == 'new').toList();
-    // setState(() {
-      // new_products = newArrivals;
-    // });
+    return allProducts.where((p) => p.section.toLowerCase() == 'new').toList();
   }
 
   @override
@@ -45,38 +45,43 @@ class _NewArrivalsState extends State<NewArrivals> {
           const SizedBox(height: 12),
           SizedBox(
             height: 370,
-            child: new_products.isEmpty
-                ? const Center(child: Text('No new arrivals found'))
-                : ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: new_products.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final product = new_products[index];
-                return SizedBox(
-                  width: 250,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductDetail(
-                            p_id: product.p_id.toString(),
-                            title: product.title,
-                          ),
+            child: FutureBuilder<List<ProductItem>>(
+              future: _fetchNewArrivals(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(child: Text('Error loading new arrivals'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No new arrivals found'));
+                }
+
+                // final newProducts = snapshot.data!;
+
+                return ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: snapshot.data!.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    final product = snapshot.data![index];
+                    return SizedBox(
+                      width: 250,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetail(p_id: product.p_id.toString(), title: product.title,),),);
+                        },
+                        child: ProductCard(
+                          imageUrl: product.imageUrl,
+                          title: product.title,
+                          subtitle: product.subtitle,
+                          price: product.price,
+                          p_id: product.p_id.toString(),
+                          description: product.description,
                         ),
-                      );
-                    },
-                    child: ProductCard(
-                      imageUrl: product.imageUrl,
-                      title: product.title,
-                      subtitle: product.subtitle,
-                      price: product.price,
-                      p_id: product.p_id.toString(),
-                      description: product.description,
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 );
               },
             ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../helpers/api_helper.dart';
 import '../models/categoriesss_item.dart';
 import '../database/DBHelper.dart';
 import '../screens/category_page.dart';
@@ -15,23 +16,31 @@ class Categories extends StatefulWidget {
 }
 
 class _CategoriesState extends State<Categories> {
-  late Future<List<CategoriesssItem>> _futureCategories;
-
+  late Future<List<Map<String, dynamic>>> _futureCategories;
   @override
   void initState() {
     super.initState();
-    _futureCategories = DBHelper.instance.getAllCategories();
+    _futureCategories = fetchCategories();
   }
 
-  Future<String?> _getFullImagePath(String filename) async {
-    final dir = await getApplicationDocumentsDirectory();
-    final path = '${dir.path}/$filename';
-    return File(path).existsSync() ? path : null;
+  Future<List<Map<String, dynamic>>> fetchCategories() async {
+    final response = await APIHelper.category();
+    if (response['status'] == true && response['data'] != null) {
+      return List<Map<String, dynamic>>.from(response['data']);
+    } else {
+      return [];
+    }
   }
+
+  // Future<String?> _getFullImagePath(String filename) async {
+  //   final dir = await getApplicationDocumentsDirectory();
+  //   final path = '${dir.path}/$filename';
+  //   return File(path).existsSync() ? path : null;
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<CategoriesssItem>>(
+    return FutureBuilder<List<Map<String, dynamic>>>(
       future: _futureCategories,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -66,53 +75,46 @@ class _CategoriesState extends State<Categories> {
                 itemBuilder: (context, index) {
                   final category = categories[index];
 
-                  return FutureBuilder<String?>(
-                    future: _getFullImagePath(category.imagePath),
-                    builder: (context, snapshot) {
-                      final imagePath = snapshot.data;
-
-                      return Column(
-                        children: [
-                          Material(
-                            color: Colors.white,
-                            shape: const CircleBorder(),
-                            elevation: 1,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(900),
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (_) => CategoryProductsPage(categoryId: category.id.toString(), categoryName: category.c_name,),));
-                              },
-                              child: Container(
-                                width: 60,
-                                height: 60,
-                                alignment: Alignment.center,
-                                child: ClipOval(
-                                  child: imagePath != null
-                                      ? Image.file(
-                                    File(imagePath),
-                                    width: 48,
-                                    height: 48,
-                                    fit: BoxFit.cover,
-                                  )
-                                      : const Icon(Icons.image_not_supported),
-                                ),
-                              ),
+                  return Column(
+                    children: [
+                      Material(
+                        color: Colors.white,
+                        shape: const CircleBorder(),
+                        elevation: 1,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(900),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => CategoryProductsPage(categoryId: category['category_id'].toString(), categoryName: category['category_name'],),),);
+                          },
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            alignment: Alignment.center,
+                            child: ClipOval(
+                              child: category['category_image'] != null ?
+                              Image.network(
+                                category['category_image'],
+                                width: 48,
+                                height: 48,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+                              ) : const Icon(Icons.image_not_supported),
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          SizedBox(
-                            width: 70,
-                            child: Text(
-                              category.c_name,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 12),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        width: 70,
+                        child: Text(
+                          category['category_name'],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 12),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,7 +27,7 @@ class AuthProvider with ChangeNotifier {
     //print('loged in initially');
   }
 
-  Future<Map<String, dynamic>> guestold() async {
+  Future<Map<String, dynamic>> guestOld() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('access_token');
     final userJson = prefs.getString('user_info');
@@ -48,7 +47,7 @@ class AuthProvider with ChangeNotifier {
       };
     }
 
-    final result = await APIHelper.guestApi();
+    final result = await APIHelper.guest();
 
     if (result['status']) {
       _token = result['token'];
@@ -84,7 +83,7 @@ class AuthProvider with ChangeNotifier {
 
     print("token To $token");
     if(token == null){
-      final result = await APIHelper.guestApi();
+      final result = await APIHelper.guest();
       if (result['status'] != true){
         // show "error"
         return false;
