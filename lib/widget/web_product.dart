@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:erp_demo/widget/web_product_card.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../screens/product_detail.dart';
 import 'product_card.dart';
@@ -82,7 +85,7 @@ class WebProducts extends StatelessWidget {
             height: 370,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 35),
               itemCount: productList.length,
               separatorBuilder: (_, __) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
@@ -90,22 +93,19 @@ class WebProducts extends StatelessWidget {
                 return SizedBox(
                   width: 250,
                   // width: MediaQuery.of(context).size.width - 130,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductDetail(p_id: product['p_id']!, title: product['title']!,),
-                        ),
-                      );
-                    },
-                    child: WebProductCard(
-                      imageUrl: product['imageUrl']!,
-                      title: product['title']!,
-                      subtitle: product['subtitle']!,
-                      price: product['price']!, //double.parse(product['price']!.replaceAll('Rs ', '')),
-                      p_id: product['p_id']!,
-                      description: product['description']!,
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetail(p_id: product['p_id']!, title: product['title']!,),),);},
+                      child: WebProductCard(
+                        imageUrl: product['imageUrl']!,
+                        title: product['title']!,
+                        subtitle: product['subtitle']!,
+                        price: product['price']!,
+                        p_id: product['p_id']!,
+                        description: product['description']!,
+                      ),
                     ),
                   ),
                 );

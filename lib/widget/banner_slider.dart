@@ -53,12 +53,13 @@ class _BannerSliderState extends State<BannerSlider> {
 
         return Column(
           children: [
-            const SizedBox(height: 26),
+            // const SizedBox(height: 10),
             CarouselSlider.builder(
               itemCount: bannerItems.length,
               carouselController: _controller,
               options: CarouselOptions(
                 autoPlay: true,
+                autoPlayCurve: Curves.easeInQuad,
                 enlargeCenterPage: true,
                 viewportFraction: kIsWeb? 1.0: 0.93,
                 aspectRatio: kIsWeb ? 16 / 7 : 16 / 9,
@@ -74,7 +75,7 @@ class _BannerSliderState extends State<BannerSlider> {
                 );
               },
             ),
-            const SizedBox(height: 8),
+            // const SizedBox(height: 0.1),
             buildIndicator(bannerItems.length),
           ],
         );
@@ -85,12 +86,12 @@ class _BannerSliderState extends State<BannerSlider> {
   Widget buildIndicator(int count) => AnimatedSmoothIndicator(
     activeIndex: _activeIndex,
     count: count,
-    effect: WormEffect(
-      dotHeight: 6, dotWidth: 6, spacing: 8, dotColor: Colors.black, activeDotColor: Theme.of(context).primaryColor,
+    effect: ScaleEffect(
+      dotHeight: 6, dotWidth: 6, activeDotColor: Theme.of(context).primaryColor, dotColor: Colors.black, spacing: 8,
     ),
   );
 
-  Widget buildBanner({
+Widget buildBanner({
     required String banner_name,
     required String banner_image,
   }) {
@@ -98,19 +99,22 @@ class _BannerSliderState extends State<BannerSlider> {
       borderRadius: kIsWeb? BorderRadius.circular(0): BorderRadius.circular(20) ,
       child: AspectRatio(
         aspectRatio: kIsWeb ? 16 / 7 : 16 / 9,
-        child: Image.network(
-          banner_image,
-          // fit: BoxFit.fitHeight,
-          fit: BoxFit.cover,
-          // fit: BoxFit.contain,
-          width: double.infinity,
-          errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.broken_image)),
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return const Center(child: CircularProgressIndicator());
-          },
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: Image.network(
+            banner_image,
+            // fit: BoxFit.fitHeight,
+            // fit: BoxFit.cover,
+            fit: BoxFit.contain,
+            width: double.infinity,
+            errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.broken_image)),
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return const Center(child: CircularProgressIndicator());
+            },
+          ),
         ),
-      ),
+      )
     );
   }
 }
