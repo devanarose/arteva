@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:erp_demo/models/banner_item.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -51,8 +52,7 @@ class APIHelper {
     final url = Uri.parse('$baseUrl/banners');
     try {
       final response = await http.get(url);
-      print('api response status: ${response.statusCode}');
-      // print(' API Response Body: ${response.body}');
+      print('API response status: ${response.statusCode}');
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final List<dynamic> jsonData = jsonDecode(response.body);
@@ -65,11 +65,12 @@ class APIHelper {
           'banner_link_type': item['banner_link_type'],
         }).toList();
 
-        print('bannerrrr: ');
-        print(banners);
+        // final banners = jsonData.map((item) => BannerItem.fromJson(item)).toList();
+
+        // print('Parsed banners: $banners');
         return {
           'status': true,
-          'message': 'banner image loaded',
+          'message': 'Banner image loaded',
           'data': banners,
         };
       } else {
@@ -90,7 +91,7 @@ class APIHelper {
   static Future<Map<String, dynamic>> category() async {
     final url = Uri.parse('$baseUrl/categories');
     try{
-      final response = await http.post(url);
+      final response = await http.get(url);
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final List<dynamic> jsonData = jsonDecode(response.body);
 
@@ -102,8 +103,8 @@ class APIHelper {
           'category_image': item['category_image'],
         }).toList();
 
-        print('categories: ');
-        print(categories);
+        // print('categories: ');
+        // print(categories);
         return {
           'status': true,
           'message': 'categories image loaded',

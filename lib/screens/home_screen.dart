@@ -257,10 +257,11 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ListView(
         padding: const EdgeInsets.only(bottom: 100),
         children: const [
-          Categories(),
+          if(!kIsWeb) Categories(),
           BannerSlider(),
+          if(kIsWeb) Categories(),
           Products(),
-          // NewArrivals(),
+          NewArrivals(),
           if(kIsWeb) WebProducts(),
         ],
       ),
